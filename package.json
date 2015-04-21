@@ -1,0 +1,27 @@
+{
+  "name": "karma-cruisecontrol-nunit-reporter",
+  "version": "0.0.0",
+  "description": "An NUnit for the Karma test runner that is readable by CruiseControl.Net",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sjdixon/karma-cruisecontrol-nunit-reporter.git"
+  },
+  "keywords": [
+    "karma",
+    "npm",
+    "cruisecontrol",
+    "cruisecontrol.net",
+    "reporter",
+    "nunit"
+  ],
+  "author": "Stephen J. Dixon",
+  "license": "Apache",
+  "bugs": {
+    "url": "https://github.com/sjdixon/karma-cruisecontrol-nunit-reporter/issues"
+  },
+  "homepage": "https://github.com/sjdixon/karma-cruisecontrol-nunit-reporter"
+}
