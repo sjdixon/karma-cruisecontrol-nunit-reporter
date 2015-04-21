@@ -4,7 +4,7 @@
   "description": "An NUnit for the Karma test runner that is readable by CruiseControl.Net",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
