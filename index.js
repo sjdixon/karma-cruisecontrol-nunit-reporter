@@ -8,6 +8,7 @@ var CruiseControlReporter = function(baseReporterDecorator, config, logger, help
   var log = logger.create('reporter.cruisecontrol');
   var reporterConfig = config.ccreporter || {};
   var pkgName = reporterConfig.suite || 'Karma Results';
+  var namespace = reporterConfig.namespace || "Unspecified";
   var outputFile = helper.normalizeWinPath(path.resolve(config.basePath, reporterConfig.outputFile
       || 'test-results.xml'));
   
@@ -17,6 +18,7 @@ var CruiseControlReporter = function(baseReporterDecorator, config, logger, help
   var namespaceSuites;
   var textFixtures = {};
   var textFixtureResults = {};
+  var textFixtureTimings = {};
   var results;
   var pendingFileWritings = 0;
   var fileWritingFinished = function() {};
@@ -41,7 +43,7 @@ var CruiseControlReporter = function(baseReporterDecorator, config, logger, help
       type: "Assembly"
     })
     namespaceSuites[browser.id] = assemblySuites[browser.id].ele('results').ele('test-suite', {
-      name: "Divestco.SuperMap.ng-tests",
+      name: namespace,
       type: "Namespace"
     });
     results[browser.id] = namespaceSuites[browser.id] .ele('results');
@@ -60,6 +62,7 @@ var CruiseControlReporter = function(baseReporterDecorator, config, logger, help
     namespaceSuites = Object.create(null);
     testFixtures = Object.create(null);
     testFixtureResults = Object.create(null);
+    testFixtureTimings = Object.create(null);
     results = Object.create(null);
     
     // create root node.
@@ -145,7 +148,6 @@ var CruiseControlReporter = function(baseReporterDecorator, config, logger, help
   };
 
   this.specSuccess = this.specSkipped = this.specFailure = function(browser, result){
-    //console.log(result);
     // Create test fixture element if not there already
     var fixture;
     var fixtureResults;
@@ -159,14 +161,16 @@ var CruiseControlReporter = function(baseReporterDecorator, config, logger, help
         'time' : 0
       });
       testFixtureResults[suiteName] = testFixtures[suiteName].ele('results');
+      testFixtureTimings[suiteName] = 0;
     }
     fixture = testFixtures[suiteName];
     fixtureResults = testFixtureResults[suiteName];
     
     // Initialize test case
+    var elapsed = ((result.time || 0) / 1000);
     var spec = fixtureResults.ele('test-case', {
       name: result.description, 
-      time: ((result.time || 0) / 1000),
+      time: elapsed,
       description: (pkgName ? pkgName + ' ' : '') + browser.name + '.' + result.suite.join(' ').replace(/\./g, '_'),
       executed: result.skipped ? 'False' : 'True',
       success: (result.success || result.skipped) ? 'True' : 'False', // Skipped tests are successful
@@ -175,16 +179,19 @@ var CruiseControlReporter = function(baseReporterDecorator, config, logger, help
 
     if (result.skipped) {
       totalSkipped++;
-      fixture.executed = false;
+      fixture.att('executed', false);
     }
 
     if (!result.success && !result.skipped) {
         var failure = spec.ele('failure');
         failure.ele('message').dat(result.log);
         failure.ele('stack-trace').dat(result.suite + ' ' + result.description);
-        fixture.result = 'Failure';
+        fixture.att('result', 'Failure');
     }
-    fixture.time += spec.time;
+    
+    var currentTime = testFixtureTimings[suiteName];
+    fixture.att('time',  currentTime + elapsed);
+    testFixtureTimings[suiteName] = currentTime + elapsed;
   };
 
   this.onExit = function(done) {
