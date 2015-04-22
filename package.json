@@ -23,5 +23,8 @@
   "bugs": {
     "url": "https://github.com/sjdixon/karma-cruisecontrol-nunit-reporter/issues"
   },
-  "homepage": "https://github.com/sjdixon/karma-cruisecontrol-nunit-reporter"
+  "homepage": "https://github.com/sjdixon/karma-cruisecontrol-nunit-reporter",
+  "devDependencies": {
+    "xmlbuilder": "^2.6.2"
+  }
 }
